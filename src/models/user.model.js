@@ -30,9 +30,7 @@ class User {
       this.id_user = result.insertId;
       delete this.password;
       const token = jwt.sign({ ...this }, TOKEN_KEY, { expiresIn: '1d' });
-      jwt.verify(token, TOKEN_KEY, (err, decoded) => {
-        console.log(err, decoded);
-      });
+
       return { token };
     } catch (error) {
       console.log(error);
