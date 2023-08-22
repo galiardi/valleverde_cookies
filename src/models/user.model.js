@@ -155,7 +155,7 @@ class User {
   static async getUserById(id_user) {
     try {
       const [rows] = await promisePool.execute(
-        'SELECT * from users WHERE id_usuario = ?',
+        'SELECT * from users WHERE id_user = ?',
         [id_user]
       );
       if (rows.length === 0) return null;
