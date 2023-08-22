@@ -99,7 +99,7 @@ async function recoverPassword(req, res) {
     return res.status(404).send(response);
   }
 
-  response.data = true;
+  response.data = `Password sent to ${email}`;
   res.status(200).send(response);
 }
 

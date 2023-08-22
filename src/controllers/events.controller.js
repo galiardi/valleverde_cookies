@@ -18,7 +18,7 @@ async function registerUserOnEvent(req, res) {
   }
 
   // valida que el usuario que se esta registrando corresponda con el usuario del token
-  if (id_user != res.locals.id_user) {
+  if (id_user != res.locals.user.id_user) {
     response.error = 'Invalid ownership';
     return res.status(403).send(response);
   }
