@@ -7,22 +7,13 @@ import { getRandomNumN } from '../functions/getRandomNum.js';
 import { ROOT_KEY } from '../config.js';
 
 class User {
-  constructor({
-    id_user = null,
-    name,
-    lastname,
-    rut,
-    email,
-    password,
-    root_key = null,
-  }) {
+  constructor({ id_user = null, name, lastname, rut, email, password, root_key = null }) {
     this.id_user = id_user;
     this.name = name;
     this.lastname = lastname;
     this.rut = rut;
     this.email = email;
     this.password = password;
-    this.root_key = root_key;
     this.id_rol = root_key === ROOT_KEY ? 1 : 2; // si se provee root_key, se crea un administrador, si no, un usuario
   }
 
@@ -32,20 +23,12 @@ class User {
 
       const [result] = await promisePool.execute(
         'INSERT INTO users (name, lastname, rut, email, password, id_rol) VALUES (?, ?, ?, ?, ?, ?);',
-        [
-          this.name,
-          this.lastname,
-          this.rut,
-          this.email,
-          hashed_password,
-          this.id_rol,
-        ]
+        [this.name, this.lastname, this.rut, this.email, hashed_password, this.id_rol]
       );
 
       // crea un token
       this.id_user = result.insertId;
       delete this.password;
-      delete this.root_key;
       const token = jwt.sign({ ...this }, TOKEN_KEY, { expiresIn: '1d' });
       jwt.verify(token, TOKEN_KEY, (err, decoded) => {
         console.log(err, decoded);
@@ -86,10 +69,9 @@ class User {
 
   static async recoverPassword(email) {
     try {
-      const [rows] = await promisePool.execute(
-        'SELECT * FROM users WHERE email = ?;',
-        [email]
-      );
+      const [rows] = await promisePool.execute('SELECT * FROM users WHERE email = ?;', [
+        email,
+      ]);
       if (rows.length === 0) return 'Email not found';
 
       // Creamos un password provisorio para enviar al cliente
@@ -154,10 +136,9 @@ class User {
   // Para poder pedir la informacion del usuario cuando, por ejemplo, se quiera mandar un mail de confirmacion
   static async getUserById(id_user) {
     try {
-      const [rows] = await promisePool.execute(
-        'SELECT * from users WHERE id_user = ?',
-        [id_user]
-      );
+      const [rows] = await promisePool.execute('SELECT * from users WHERE id_user = ?', [
+        id_user,
+      ]);
       if (rows.length === 0) return null;
       return rows[0];
     } catch (error) {
